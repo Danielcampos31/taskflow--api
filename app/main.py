@@ -1,6 +1,9 @@
 
+from datetime import datetime
 from fastapi import FastAPI
 from pydantic import BaseModel
+
+from app.schemas import TaskCreate, TaskRead
 
 app = FastAPI(
     title="TaskFlow API",
@@ -49,3 +52,20 @@ def version():
 )
 def ping():
     return {"message": "pong"}
+
+
+@app.post(
+    "/tasks",
+    response_model=TaskRead,
+    status_code=201,
+    summary="Crear una tarea temporal"
+)
+def create_task(task: TaskCreate):
+    return TaskRead(
+        id=1,
+        title=task.title,
+        description=task.description,
+        project_id=task.project_id,
+        completed=False,
+        created_at=datetime.now()
+    )
