@@ -95,10 +95,108 @@ Las pruebas se han realizado desde Swagger:
 
 Se ha enviado una tarea con los datos correctos y la API ha devuelto el código 201.
 
-![Prueba válida - respuesta 201](prueba_valida.png)
+![Prueba válida - respuesta 201](/Capturas/prueba_valida.png)
 
 ### 2. Prueba inválida (422)
 
 Se ha enviado una tarea con el título vacío y la API ha devuelto el error 422 por incumplir la validación.
 
-![Prueba inválida - respuesta 422](prueba_invalida.png)
+![Prueba inválida - respuesta 422](/Capturas/prueba_invalida.png)
+
+
+# Práctica 1.3 — Organización con APIRouter
+
+## 1. Objetivo
+
+El objetivo de esta práctica es organizar las rutas de TaskFlow API utilizando `APIRouter`, separando los endpoints según el recurso al que pertenecen.
+
+De esta forma, el archivo `main.py` queda más limpio y cada grupo de rutas está organizado en su propio archivo.
+
+## 2. Estructura del proyecto
+
+Se ha creado la carpeta `routers` dentro de `app` para separar las rutas.
+
+La estructura utilizada es:
+
+```text
+app/
+│
+├── main.py
+├── schemas.py
+├── __init__.py
+│
+└── routers/
+    ├── __init__.py
+    ├── tasks.py
+    └── projects.py
+```
+
+## 3. Cambios realizados
+
+### Router de tareas
+
+Se ha creado el archivo `tasks.py`, utilizando `APIRouter` con:
+
+- Prefix: `/tasks`
+- Tag: `tasks`
+
+Se ha trasladado el endpoint `POST /tasks` desde `main.py` a este archivo.
+
+### Router de proyectos
+
+Se ha creado el archivo `projects.py`, utilizando `APIRouter` con:
+
+- Prefix: `/projects`
+- Tag: `projects`
+
+También se ha añadido el endpoint `GET /projects`, que devuelve una lista vacía.
+
+### Archivo main.py
+
+Se ha modificado `main.py` para importar los routers y registrarlos mediante:
+
+```python
+app.include_router(tasks.router)
+app.include_router(projects.router)
+```
+
+Las rutas generales `/health`, `/version` y `/ping` permanecen en `main.py`.
+
+## 4. Comprobaciones realizadas
+
+Se ha iniciado la aplicación con:
+
+```bash
+uvicorn app.main:app --reload
+```
+
+Después se ha accedido a Swagger mediante:
+
+http://127.0.0.1:8000/docs
+
+Se ha comprobado lo siguiente:
+
+- Las rutas generales siguen apareciendo en Swagger.
+- El endpoint `POST /tasks` aparece dentro del grupo `tasks`.
+- El endpoint `GET /projects` aparece dentro del grupo `projects`.
+- La petición `GET /projects` devuelve el código HTTP 200 OK.
+
+## 5. Capturas de pantalla
+
+### Captura 1. Swagger con los routers organizados
+
+Se muestra la documentación de Swagger con los grupos `default`, `tasks` y `projects`.
+
+![Swagger con los grupos organizados](/Capturas/swaggers-routers.png)
+
+### Captura 2. Comprobación de GET /projects
+
+Se muestra la ejecución del endpoint `GET /projects` y su respuesta HTTP 200 OK.
+
+![Prueba GET projects](capturas/projects.png)
+
+## 6. Conclusión
+
+Con esta práctica he aprendido a utilizar `APIRouter` para organizar las rutas de una API por recursos.
+
+Separar las rutas en diferentes archivos permite mantener el código más ordenado y facilita su mantenimiento cuando el proyecto va creciendo.
