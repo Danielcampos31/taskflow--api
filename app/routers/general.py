@@ -47,3 +47,9 @@ def version():
 )
 def ping():
     return {"message": "pong"}
+
+
+# Ruta temporal para comprobar el manejo global de excepciones.
+@router.get("/error")
+def provocar_error():
+    raise RuntimeError("Este es un error de prueba")

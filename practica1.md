@@ -200,3 +200,76 @@ Se muestra la ejecución del endpoint `GET /projects` y su respuesta HTTP 200 OK
 Con esta práctica he aprendido a utilizar `APIRouter` para organizar las rutas de una API por recursos.
 
 Separar las rutas en diferentes archivos permite mantener el código más ordenado y facilita su mantenimiento cuando el proyecto va creciendo.
+
+# Práctica 1.4 — Middleware
+
+## 1. Objetivo
+
+El objetivo de esta práctica es añadir funcionalidades que se ejecuten de forma transversal en TaskFlow API mediante middleware.
+
+Se han configurado CORS, un middleware personalizado para medir el tiempo de respuesta y un manejador global de excepciones.
+
+## 2. Configuración de CORS
+
+Se ha configurado `CORSMiddleware` para permitir las peticiones procedentes de:
+
+`http://localhost:5173`
+
+También se han permitido los métodos y cabeceras HTTP y se ha añadido `X-Process-Time` a las cabeceras expuestas para que el frontend pueda consultarla.
+
+## 3. Middleware personalizado
+
+Se ha creado un middleware que mide el tiempo que tarda la API en procesar cada petición.
+
+Para ello se utiliza `time.perf_counter()`, que permite calcular el tiempo transcurrido.
+
+El resultado se añade a la respuesta mediante la cabecera:
+
+`X-Process-Time`
+
+El tiempo se muestra en milisegundos.
+
+## 4. Manejo global de excepciones
+
+Se ha implementado un manejador global para capturar excepciones no controladas.
+
+Cuando se produce un error interno, la API devuelve el código HTTP 500 y un mensaje JSON genérico:
+
+```json
+{
+    "error": "Error interno del servidor"
+}
+```
+
+El error completo se registra internamente mediante logging, evitando mostrar información interna o el stacktrace al cliente.
+
+## 5. Pruebas realizadas
+
+Se han realizado las siguientes comprobaciones:
+
+- Petición GET a `/health` para comprobar el funcionamiento de la API.
+- Comprobación de la cabecera `X-Process-Time` desde las herramientas de desarrollador.
+- Petición a `/error` para comprobar el manejo global de excepciones.
+- Petición OPTIONS para comprobar que CORS permite el origen `http://localhost:5173`.
+
+Todas las pruebas han funcionado correctamente.
+
+## 6. Capturas
+
+### Captura 1. Middleware de tiempo
+
+Se muestra la cabecera `X-Process-Time` en la respuesta de la API.
+
+![Middleware de tiempo](/Capturas/tiempo-middleware.png)
+
+### Captura 2. Manejo global de errores
+
+Se muestra la respuesta JSON con código HTTP 500 al provocar una excepción.
+
+![Manejo de errores](/Capturas/error.png)
+
+### Captura 3. Configuración CORS
+
+Se muestran las cabeceras que confirman que el origen `http://localhost:5173` está permitido.
+
+![Configuración CORS](/Capturas/cors.png)
